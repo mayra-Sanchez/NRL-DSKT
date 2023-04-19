@@ -1,37 +1,56 @@
 import tkinter as tk
-from tkinter import Tk, Label, Button
+from tkinter import Label, Button
+from ventana_ayuda import VentanaAyuda
+from ventana_historial import VentanaHistorial
+from ventana_subir_imagen import ventanaSubirImagen
 
-class VentanaInicial:
+class VentanaInicial(tk.Tk):
 
-	def __init__(self, master):
-		self.master = master
-		master.title("NRL-DSKT")
-		self.etiqueta = Label(master, text="NRL-DSKT")
-		self.etiqueta.pack()
-		self.etiqueta.config(font=('Arial', 44))
-		self.etiqueta.place(x=55, y=40)
-		self.etiqueta.config(bg="grey")
+    def __init__(self):
+        super().__init__()
+        self.title("NRL-DSKT")
+        self.etiqueta = Label(self, text="NRL-DSKT")
+        self.etiqueta.pack()
+        self.etiqueta.config(font=('Arial', 44))
+        self.etiqueta.place(x=100, y=40)
+        self.etiqueta.config(bg="grey")
 
-		self.image = tk.PhotoImage(file="cerebro.png")
-		self.labelImagen = Label(image=self.image)
-		self.labelImagen.pack()
-		self.labelImagen.place(x=10, y=150)
-		self.labelImagen.config(bg="grey")
+        self.image = tk.PhotoImage(file="Resources/cerebro.png")
+        self.labelImagen = Label(image=self.image)
+        self.labelImagen.pack()
+        self.labelImagen.place(x=10, y=150)
+        self.labelImagen.config(bg="grey")
 
-		self.botonSubir = Button(master, text="Subir imagen", command=self.abrir_ventana_imagen)
-		self.botonSubir.pack()
-		self.botonSubir.place(x=500, y=180)
+        # Definir los componentes de la interfaz
+        self.botonSubir = Button(self, text="Subir imagen", command=self.VentanaImagen)
+        self.botonSubir.pack()
+        self.botonSubir.config(bg="white")		
+        self.botonSubir.place(x=500, y=180)
 
-		self.botonHistorial = Button(master, text="Historial", command=master.abrir_ventana_historial)
-		self.botonHistorial.pack()
-		self.botonHistorial.place(x=520, y=240)
+        self.botonHistorial = Button(self, text="Historial", command=self.mostrar_historial)
+        self.botonHistorial.pack()
+        self.botonHistorial.config(bg="white")
+        self.botonHistorial.place(x=520, y=240)
 
-		self.botonAyuda = Button(master, text="¿?", command=master.abrir_ventana_ayuda)
-		self.botonAyuda.pack()
-		self.botonAyuda.place(x=535, y=300)
+        self.botonAyuda = Button(self, text="¿?", command=self.mostrar_ayuda)
+        self.botonAyuda.pack()
+        self.botonAyuda.config(bg="white")
+        self.botonAyuda.place(x=535, y=300)
+    
+    def VentanaImagen(self):
+        ventana_image = ventanaSubirImagen(self)
 
-root = Tk()
-root.config(bg="grey")
+    def mostrar_historial(self):
+        historial = ["imagen1.png", "imagen2.png", "imagen3.png"]  # Aquí iría el código para obtener el historial de imágenes
+        ventana_historial = VentanaHistorial(self,historial)
 
-miVentana = VentanaInicial(root)
-root.mainloop()
+    def mostrar_ayuda(self):
+        ayuda = "Esta es la ventana de ayuda. Aquí puedes encontrar información sobre cómo usar la aplicación."
+        ventana_ayuda = VentanaAyuda(self, ayuda)
+
+if __name__ == "__main__":
+    app = VentanaInicial()
+    app.geometry("650x550")
+    app.config(bg="grey")
+    app.mainloop()
+
