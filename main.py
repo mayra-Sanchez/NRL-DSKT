@@ -1,8 +1,9 @@
 import tkinter as tk
 from tkinter import Label, Button
-from ventana_ayuda import VentanaAyuda
-from ventana_historial import VentanaHistorial
-from ventana_subir_imagen import ventanaSubirImagen
+from PIL import Image, ImageDraw, ImageTk
+from ventanas.ventana_ayuda import VentanaAyuda
+from ventanas.ventana_historial import VentanaHistorial
+from ventanas.ventana_subir_imagen import ventanaSubirImagen
 
 class VentanaInicial(tk.Tk):
 
@@ -15,6 +16,11 @@ class VentanaInicial(tk.Tk):
         self.etiqueta.place(x=100, y=40)
         self.etiqueta.config(bg="grey")
 
+        # Cargar la imagen ovalada
+        self.imagen_ovalada = Image.new("RGBA", (100, 50), "white")
+        draw = ImageDraw.Draw(self.imagen_ovalada)
+        draw.ellipse((0, 0, 100, 50), fill="blue")
+
         self.image = tk.PhotoImage(file="Resources/cerebro.png")
         self.labelImagen = Label(image=self.image)
         self.labelImagen.pack()
@@ -22,9 +28,10 @@ class VentanaInicial(tk.Tk):
         self.labelImagen.config(bg="grey")
 
         # Definir los componentes de la interfaz
-        self.botonSubir = Button(self, text="Subir imagen", command=self.VentanaImagen)
+        self.imagen_ovalada_tk = ImageTk.PhotoImage(self.imagen_ovalada)
+        self.botonSubir = Button(self, command=self.VentanaImagen, image=self.imagen_ovalada_tk)
         self.botonSubir.pack()
-        self.botonSubir.config(bg="white")		
+        self.botonSubir.config(bg="white", borderwidth=0)		
         self.botonSubir.place(x=500, y=180)
 
         self.botonHistorial = Button(self, text="Historial", command=self.mostrar_historial)
@@ -53,4 +60,3 @@ if __name__ == "__main__":
     app.geometry("650x550")
     app.config(bg="grey")
     app.mainloop()
-
