@@ -16,11 +16,6 @@ class VentanaInicial(tk.Tk):
         self.etiqueta.place(x=100, y=40)
         self.etiqueta.config(bg="grey")
 
-        # Cargar la imagen ovalada
-        self.imagen_ovalada = Image.new("RGBA", (100, 50), "white")
-        draw = ImageDraw.Draw(self.imagen_ovalada)
-        draw.ellipse((0, 0, 100, 50), fill="blue")
-
         self.image = tk.PhotoImage(file="Resources/cerebro.png")
         self.labelImagen = Label(image=self.image)
         self.labelImagen.pack()
@@ -28,11 +23,10 @@ class VentanaInicial(tk.Tk):
         self.labelImagen.config(bg="grey")
 
         # Definir los componentes de la interfaz
-        self.imagen_ovalada_tk = ImageTk.PhotoImage(self.imagen_ovalada)
-        self.botonSubir = Button(self, command=self.VentanaImagen, image=self.imagen_ovalada_tk)
+        self.botonSubir = Button(self,text="Subir", command=self.VentanaImagen)
         self.botonSubir.pack()
-        self.botonSubir.config(bg="white", borderwidth=0)		
-        self.botonSubir.place(x=500, y=180)
+        self.botonSubir.config(bg="white")		
+        self.botonSubir.place(x=530, y=180)
 
         self.botonHistorial = Button(self, text="Historial", command=self.mostrar_historial)
         self.botonHistorial.pack()
