@@ -63,10 +63,6 @@ class ventanaSubirImagen(tk.Toplevel):
         # self.opc3 =  tk.OptionMenu(self, self.ruido_m,  "Filtro medio", "Filtro mediano", command=self.display_selected)
         # self.opc3.place(x=480, y= 260, width=150,height=40)
 
-        canvasSegmentacion = tk.Canvas(self, width=300, height=200, bg="blue")
-        canvasSegmentacion.pack()
-        canvasSegmentacion.place(x= 850, y= 100)
-
     def cargar_imagen(self):
         self.file_path = filedialog.askopenfilename()
         self.rutaImage=self.file_path
@@ -117,31 +113,34 @@ class ventanaSubirImagen(tk.Toplevel):
         self.escalaEjes.place(x=20, y= 100)
 
     def seleccion_segmentacion(self, *args):
+        canvasSegmentacion = tk.Canvas(self, width=300, height=200, bg="grey", highlightbackground="grey", highlightthickness=2)
+        canvasSegmentacion.pack()
+        canvasSegmentacion.place(x= 850, y= 100)
         if self.segmentacion_m.get()=='Umbralización' and self.rutaImage!="" :
-            self.tautext = tk.Label(self, text ="Tau:", bg="grey",fg="black" )
-            self.tautext.place(x=900, y= 180)
-            self.Tau = tk.Entry(self,justify="center")
+            self.tautext = tk.Label(canvasSegmentacion, text ="Tau:", bg="grey",fg="black" )
+            self.tautext.place(x=100, y= 10)
+            self.Tau = tk.Entry(canvasSegmentacion,justify="center")
             self.Tau.insert(0, "110")
-            self.Tau.place(x=1000, y= 180)
+            self.Tau.place(x=100, y= 50)
 
-            self.toletext = tk.Label(self, text ="Tolerancia:", bg="grey",fg="black" )
-            self.toletext.place(x=900, y= 300)
-            self.Tol = tk.Entry(self,justify="center")
+            self.toletext = tk.Label(canvasSegmentacion, text ="Tolerancia:", bg="grey",fg="black" )
+            self.toletext.place(x=100, y= 90)
+            self.Tol = tk.Entry(canvasSegmentacion,justify="center")
             self.Tol.insert(0, "1")
-            self.Tol.place(x=1000, y=300)
+            self.Tol.place(x=100, y=130)
 
-            self.btn = tk.Button(self, text="Aceptar", bg="white", borderwidth=0, command= lambda: self.confirmacion("1"))
-            self.btn.place(x=1000, y= 370)
+            self.btn = tk.Button(canvasSegmentacion, text="Aceptar", bg="white", borderwidth=0, command= lambda: self.confirmacion("1"))
+            self.btn.place(x=130, y= 160)
 
         if self.segmentacion_m.get()=='K-medianas' and self.rutaImage!="" :
-            self.ks = tk.Label(self, text ="Cantidad de clusters:", bg="grey",fg="black" )
-            self.ks.place(x=50, y= 300)
-            self.clusters = tk.Entry(justify="center")
+            self.ks = tk.Label(canvasSegmentacion, text ="Cantidad de clusters:", bg="grey",fg="black" )
+            self.ks.place(x=100, y= 50)
+            self.clusters = tk.Entry(canvasSegmentacion,justify="center")
             self.clusters.insert(0, "2")
-            self.clusters.place(x=60, y=400)
+            self.clusters.place(x=100, y=90)
 
-            self.btn = tk.Button(self, text="Aceptar", bg="grey", borderwidth=0, command= lambda: self.confirmacion("2"))
-
+            self.btn = tk.Button(canvasSegmentacion, text="Aceptar", bg="white", borderwidth=0, command= lambda: self.confirmacion("2"))
+            self.btn.place(x=150, y= 160)
         if self.segmentacion_m.get()=='GMM' and self.rutaImage!="" :
             self.imagen = self.img.get_fdata()
             self.imagen=segmentacion.gmm(self.imagen)

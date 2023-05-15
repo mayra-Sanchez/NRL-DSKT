@@ -87,3 +87,5 @@ class segmentacion():
             seg[np.multiply(r1 > r2, r1 > r3)] = 0
             seg[np.multiply(r2 > r1, r2 > r3)] = 1
             seg[np.multiply(r3 > r1, r3 > r2)] = 2
+        
+        return seg
