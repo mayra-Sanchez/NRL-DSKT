@@ -18,10 +18,10 @@ class intensidad():
             self.white_stripe()
     
     def reescala(imagen):
-        min_value = imagen.min()
-        max_value = imagen.max()
+        valor_minimo = imagen.min()
+        valor_maximo = imagen.max()
 
-        image_data_rescaled = (imagen - min_value) / (max_value - min_value)
+        image_data_rescaled = (imagen - valor_minimo) / (valor_maximo - valor_minimo)
         return image_data_rescaled
 
     def z_score(imagen):

@@ -1,4 +1,7 @@
 import numpy as np
+from sklearn.mixture import GaussianMixture
+from sklearn.preprocessing import StandardScaler
+from skimage import io
 
 class segmentacion():
     def __init__(self,image,metodo,tau):
@@ -89,3 +92,31 @@ class segmentacion():
             seg[np.multiply(r3 > r1, r3 > r2)] = 2
         
         return seg
+
+    # def gmm(imagen, n_components):
+
+    #     # Preprocesamiento de la imagen
+    #     if len(imagen.shape) > 2:
+    #         imagen = imagen[:, :, 0]
+
+    #     # # Aplana la matriz de la imagen para obtener un vector unidimensional
+    #     # data = imagen.flatten()
+
+    #     # Normaliza los datos
+    #     scaler = StandardScaler()
+    #     data = scaler.fit_transform(data.reshape(-1, 1))
+
+    #     # Crea una instancia del modelo GMM con el número de componentes deseados
+    #     gmm = GaussianMixture(n_components)
+
+    #     # Ajusta el modelo a los datos
+    #     gmm.fit(data)
+
+    #     # Obtiene las etiquetas de segmentación para cada píxel
+    #     segmentation = gmm.predict(data)
+
+    #     # Reconstruye la imagen segmentada a partir de las etiquetas
+    #     segmented_image = gmm.means_[segmentation].reshape(imagen.shape)
+
+    #     return segmented_image
+

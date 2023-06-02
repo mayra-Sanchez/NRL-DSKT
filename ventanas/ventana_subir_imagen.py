@@ -45,23 +45,23 @@ class ventanaSubirImagen(tk.Toplevel):
         self.opc1 =  tk.OptionMenu(self, self.segmentacion_m, "Umbralización","K-medianas", "GMM", command=self.seleccion_segmentacion)
         self.opc1.place(x=700, y= 180)
 
-        # # Seleccionar Intensidad
-        # self.intensidad_m =  tk.StringVar()
-        # self.intensidad_m.set("Seleccionar") 
-        # self.labelMethod2 =  tk.Label(self, text ="Intensidad: ", bg="grey",fg="white" )
-        # self.labelMethod2.place(x=10, y= 255, width=450,height=50)
+        # Seleccionar Intensidad
+        self.intensidad_m =  tk.StringVar()
+        self.intensidad_m.set("Seleccionar") 
+        self.labelMethod2 =  tk.Label(self, text ="Intensidad: ", bg="grey",fg="white" )
+        self.labelMethod2.place(x=10, y= 255, width=450,height=50)
        
-        # self.opc2 =  tk.OptionMenu(self, self.intensidad_m, "Reescala","z-score", "Coincidencia de histograma", "Raya blanca", command=self.display_selected)
-        # self.opc2.place(x=480, y= 260, width=150,height=40)
+        self.opc2 =  tk.OptionMenu(self, self.intensidad_m, "Reescala","z-score", "Coincidencia de histograma", "Raya blanca", command=self.display_selected)
+        self.opc2.place(x=480, y= 260, width=150,height=40)
 
-        # # Seleccionar Ruido
-        # self.ruido_m =  tk.StringVar()
-        # self.ruido_m.set("Seleccionar") 
-        # self.labelMethod3 =  tk.Label(self, text ="Ruido: ", bg="grey",fg="white" )
-        # self.labelMethod3.place(x=10, y= 255, width=450,height=50)
+        # Seleccionar Ruido
+        self.ruido_m =  tk.StringVar()
+        self.ruido_m.set("Seleccionar") 
+        self.labelMethod3 =  tk.Label(self, text ="Ruido: ", bg="grey",fg="white" )
+        self.labelMethod3.place(x=10, y= 255, width=450,height=50)
        
-        # self.opc3 =  tk.OptionMenu(self, self.ruido_m,  "Filtro medio", "Filtro mediano", command=self.display_selected)
-        # self.opc3.place(x=480, y= 260, width=150,height=40)
+        self.opc3 =  tk.OptionMenu(self, self.ruido_m,  "Filtro medio", "Filtro mediano", command=self.display_selected)
+        self.opc3.place(x=480, y= 260, width=150,height=40)
 
     def cargar_imagen(self):
         self.file_path = filedialog.askopenfilename()
@@ -142,15 +142,34 @@ class ventanaSubirImagen(tk.Toplevel):
             self.btn = tk.Button(canvasSegmentacion, text="Aceptar", bg="white", borderwidth=0, command= lambda: self.confirmacion("2"))
             self.btn.place(x=150, y= 160)
         if self.segmentacion_m.get()=='GMM' and self.rutaImage!="" :
+            # self.componentes = tk.Label(canvasSegmentacion, text ="Numero de componentes:", bg="grey",fg="black" )
+            # self.componentes.place(x=100, y= 50)
+            # self.num_componentes = tk.Entry(canvasSegmentacion,justify="center")
+            # self.num_componentes.insert(0, "3")
+            # self.num_componentes.place(x=100, y=90)
+
+            # self.btn = tk.Button(canvasSegmentacion, text="Aceptar", bg="white", borderwidth=0, command= lambda: self.confirmacion("3"))
+            # self.btn.place(x=150, y= 160)
             self.imagen = self.img.get_fdata()
             self.imagen=segmentacion.gmm(self.imagen)
             self.escala()
 
-    def seleccion_intensidad():
-        pass
+    def seleccion_intensidad(self, *args):
+        if self.intensidad_m.get()=='Reescala' and self.rutaImage!="" :
+            pass
+        if self.intensidad_m.get()=='z-score' and self.rutaImage!="" :
+            pass
+        if self.intensidad_m.get()=='Coincidencia de histograma' and self.rutaImage!="" :
+            pass
+        if self.intensidad_m.get()=='Raya blanca' and self.rutaImage!="" :
+            pass
 
-    def seleccion_ruido():
-        pass
+    def seleccion_ruido(self, *args):
+        if self.ruido_m.get()=='Filtro medio' and self.rutaImage!="" :
+            pass
+        if self.ruido_m.get()=='Filtro mediano' and self.rutaImage!="" :
+            pass
+   
 
     def confirmacion(self,metodo):
         if metodo=="1":
@@ -161,5 +180,9 @@ class ventanaSubirImagen(tk.Toplevel):
             self.imagen = self.img.get_fdata()
             self.imagen=segmentacion.segmentacion_k_medias(self.imagen, int(self.clusters.get()))
             self.escala()
+        # elif metodo=="3":
+        #     self.imagen = self.img.get_fdata()
+        #     self.imagen=segmentacion.gmm(self.imagen,int(self.num_componentes.get()))
+        #     self.escala()
 
         
