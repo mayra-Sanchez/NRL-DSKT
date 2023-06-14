@@ -1,9 +1,12 @@
 import tkinter as tk
 from tkinter import Label, Button
 from PIL import Image, ImageDraw, ImageTk
-from ventanas.ventana_ayuda import VentanaAyuda
-from ventanas.ventana_historial import VentanaHistorial
-from ventanas.ventana_subir_imagen import ventanaSubirImagen
+from ventanas.imagenes import imagenes
+from ventanas.preprocesamiento import preprocesamiento
+from ventanas.segmentacion_ventana import segmentacion_ventana
+from ventanas.histograma import histograma
+from ventanas.registro import registro
+
 
 class VentanaInicial(tk.Tk):
 
@@ -23,31 +26,49 @@ class VentanaInicial(tk.Tk):
         self.labelImagen.config(bg="grey")
 
         # Definir los componentes de la interfaz
-        self.botonSubir = Button(self,text="Subir", command=self.VentanaImagen)
+        self.botonSubir = Button(
+            self, text="Imagenes", command=self.VentanaImagen)
         self.botonSubir.pack()
-        self.botonSubir.config(bg="white")		
+        self.botonSubir.config(bg="white")
         self.botonSubir.place(x=530, y=180)
 
-        self.botonHistorial = Button(self, text="Historial", command=self.mostrar_historial)
-        self.botonHistorial.pack()
-        self.botonHistorial.config(bg="white")
-        self.botonHistorial.place(x=520, y=240)
+        self.botonPreprocesamiento = Button(
+            self, text="Pre-procesamiento", command=self.VentanaPreprocesamiento)
+        self.botonPreprocesamiento.pack()
+        self.botonPreprocesamiento.config(bg="white")
+        self.botonPreprocesamiento.place(x=520, y=240)
 
-        self.botonAyuda = Button(self, text="¿?", command=self.mostrar_ayuda)
-        self.botonAyuda.pack()
-        self.botonAyuda.config(bg="white")
-        self.botonAyuda.place(x=535, y=300)
-    
+        self.botonSegmentacion = Button(
+            self, text="Segmentación", command=self.VentanaSegmentacion)
+        self.botonSegmentacion.pack()
+        self.botonSegmentacion.config(bg="white")
+        self.botonSegmentacion.place(x=535, y=300)
+
+        self.botonHistograma = Button(
+            self, text="Histograma", command=self.VentanaHistograma)
+        self.botonHistograma.pack()
+        self.botonHistograma.config(bg="white")
+        self.botonHistograma.place(x=535, y=360)
+
+        self.botonRegistro = Button(self, text="Registro", command=self.VentanaRegistro)
+        self.botonRegistro.pack()
+        self.botonRegistro.config(bg="white")
+        self.botonRegistro.place(x=535, y=420)
+
     def VentanaImagen(self):
-        ventana_image = ventanaSubirImagen(self)
+        ventana_image = imagenes(self)
 
-    def mostrar_historial(self):
-        historial = ["imagen1.png", "imagen2.png", "imagen3.png"]  # Aquí iría el código para obtener el historial de imágenes
-        ventana_historial = VentanaHistorial(self,historial)
+    def VentanaPreprocesamiento(self):
+        ventana_image = preprocesamiento(self)
 
-    def mostrar_ayuda(self):
-        ayuda = "Esta es la ventana de ayuda. Aquí puedes encontrar información sobre cómo usar la aplicación."
-        ventana_ayuda = VentanaAyuda(self, ayuda)
+    def VentanaSegmentacion(self):
+        ventana_image = segmentacion_ventana(self)
+
+    def VentanaHistograma(self):
+        ventana_image = histograma(self)
+
+    def VentanaRegistro(self):
+        ventana_image = registro(self)
 
 if __name__ == "__main__":
     app = VentanaInicial()
