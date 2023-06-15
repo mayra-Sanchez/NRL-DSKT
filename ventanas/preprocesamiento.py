@@ -4,6 +4,7 @@ import nibabel as nib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from metodos.ruido import ruido
+from metodos.intensidad import intensidad
 import os
 import numpy as np
 
@@ -12,12 +13,12 @@ class preprocesamiento(tk.Toplevel):
         super().__init__(parent)
         self.title("Pre-procesamiento")
         self.config(bg="grey")
-        self.geometry("1200x610")
+        self.geometry("1500x700")
 
         self.titulo = tk.Label(self, text="NRL-DSKT")
         self.titulo.pack()
         self.titulo.config(font=('Times new roman', 35))
-        self.titulo.place(x=400, y=30)
+        self.titulo.place(x=600, y=30)
         self.titulo.config(bg="grey")
 
         self.subtitulo = tk.Label(self, text="Pre-procesamiento")
@@ -26,14 +27,24 @@ class preprocesamiento(tk.Toplevel):
         self.subtitulo.place(x=100, y=75)
         self.subtitulo.config(bg="grey")
 
+        self.subtitulo2 = tk.Label(self, text="Histograma")
+        self.subtitulo2.pack()
+        self.subtitulo2.config(font=('Times new roman', 15))
+        self.subtitulo2.place(x=1010, y=75)
+        self.subtitulo2.config(bg="grey")
+
         self.botonCargar = Button(
             self, text="Cargar imagen", command=self.cargar_imagen)
         self.botonCargar.pack()
-        self.botonCargar.place(x=100, y=570)
+        self.botonCargar.place(x=420, y=70)
 
         # Crear un lienzo para mostrar la imagen
         self.canvas = tk.Canvas(self, bg='white')
         self.canvas.place(x=100, y=100, width=450, height=450)
+
+        # Crear un lienzo para mostrar el histograma
+        self.canvasHistograma = tk.Canvas(self, bg='white')
+        self.canvasHistograma.place(x=1010, y=100, width=450, height=450)
 
         # Seleccionar Ejes
         self.variable = tk.StringVar()
@@ -59,18 +70,33 @@ class preprocesamiento(tk.Toplevel):
                                   "Filtro mediano", command=self.seleccion_ruido)
         self.opc1.place(x=730, y=210)
 
+        # Seleccionar intensidades
+        self.intensidad_m = tk.StringVar()
+        self.intensidad_m.set("Seleccionar")
+        self.labelMethod2 = tk.Label(
+            self, text="Estandarización de intensidades", bg="grey", fg="black")
+        self.labelMethod2.place(x=580, y=300)
+        self.labelMethod2.config(font=('Times new roman', 12))
+
+        self.opc2 = tk.OptionMenu(self, self.intensidad_m, "Reescala","z-score", "Coincidencia de histograma", "Raya blanca", command=self.seleccion_intensidad)
+        self.opc2.place(x=790, y=300)
+
         self.labelNombre = Label(self, text="Nombre de la imagen:" , bg="grey", fg="black")
         self.labelNombre.pack()
         self.labelNombre.config(font=('Times new roman', 12))
-        self.labelNombre.place(x=200, y=570)
+        self.labelNombre.place(x=100, y=570)
 
         self.entryNombre = Entry(self)
         self.entryNombre.pack()
-        self.entryNombre.place(x=350, y=570)
+        self.entryNombre.place(x=250, y=570)
 
         self.botonGuardar = Button(self, text="Guardar imagen", command=self.guardar_imagen)
         self.botonGuardar.pack()
-        self.botonGuardar.place(x=500, y=570)
+        self.botonGuardar.place(x=420, y=570)
+
+        self.botonHistograma = Button(self, text="Mostrar histograma", command=self.mostrar_histograma)
+        self.botonHistograma.pack()
+        self.botonHistograma.place(x=1300, y=70)
     
     def cargar_imagen(self):
 
@@ -113,6 +139,19 @@ class preprocesamiento(tk.Toplevel):
         else:
             pass
 
+    def mostrar_histograma(self):
+        self.canvasHistograma.delete("all")
+
+        fig, axs = plt.subplots() 
+
+        axs.hist(self.imagen.flatten(), 100, alpha=0.5)
+        plt.close()
+        
+        self.fig_histograma_canvas = FigureCanvasTkAgg(fig, self.canvasHistograma)
+        self.fig_histograma_canvas.draw()
+        self.fig_histograma_canvas.get_tk_widget().place(x=50, y=60, height=int(self.canvasHistograma.winfo_reqheight()), width=int(self.canvasHistograma.winfo_reqwidth()))
+
+
     def ejes(self, *args):
 
         if self.variable.get() == 'X' and self.rutaImage != "":
@@ -129,10 +168,14 @@ class preprocesamiento(tk.Toplevel):
     
     def seleccion_ruido(self, *args):
         if self.ruido_m.get() == 'Filtro medio' and self.rutaImage != "":
-            pass
+            self.imagen = self.img.get_fdata()
+            self.imagen = ruido.filtro_promedio(self.imagen)
+            self.escala()
 
         if self.ruido_m.get() == 'Filtro mediano' and self.rutaImage != "":
-            pass
+            self.imagen = self.img.get_fdata()
+            self.imagen = ruido.filtro_mediana(self.imagen)
+            self.escala()
     
     # Guardar imagen generada en una carpeta
     def guardar_imagen(self):

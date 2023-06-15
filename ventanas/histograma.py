@@ -17,7 +17,7 @@ class histograma(tk.Toplevel):
         self.titulo = tk.Label(self, text="NRL-DSKT")
         self.titulo.pack()
         self.titulo.config(font=('Times new roman', 35))
-        self.titulo.place(x=400, y=30)
+        self.titulo.place(x=600, y=30)
         self.titulo.config(bg="grey")
 
         self.subtitulo = tk.Label(self, text="Intensidades")
@@ -35,7 +35,7 @@ class histograma(tk.Toplevel):
         self.botonCargar = Button(
             self, text="Cargar imagen", command=self.cargar_imagen)
         self.botonCargar.pack()
-        self.botonCargar.place(x=100, y=570)
+        self.botonCargar.place(x=420, y=70)
 
         # Crear un lienzo para mostrar la imagen
         self.canvasImagen = tk.Canvas(self, bg='white')
@@ -71,19 +71,19 @@ class histograma(tk.Toplevel):
         self.labelNombre = Label(self, text="Nombre de la imagen:" , bg="grey", fg="black")
         self.labelNombre.pack()
         self.labelNombre.config(font=('Times new roman', 12))
-        self.labelNombre.place(x=200, y=570)
+        self.labelNombre.place(x=100, y=570)
 
         self.entryNombre = Entry(self)
         self.entryNombre.pack()
-        self.entryNombre.place(x=350, y=570)
+        self.entryNombre.place(x=250, y=570)
 
         self.botonGuardar = Button(self, text="Guardar imagen", command=self.guardar_imagen)
         self.botonGuardar.pack()
-        self.botonGuardar.place(x=500, y=570)
+        self.botonGuardar.place(x=420, y=570)
 
         self.botonHistograma = Button(self, text="Mostrar histograma", command=self.mostrar_histograma)
         self.botonHistograma.pack()
-        self.botonHistograma.place(x=1100, y=570)
+        self.botonHistograma.place(x=1300, y=70)
 
     def cargar_imagen(self):
 
@@ -230,14 +230,14 @@ class histograma(tk.Toplevel):
             self.botonCargarSegundaImagen = Button(
             self, text="Cargar imagen", command=self.cargar_imagenSecundaria)
             self.botonCargarSegundaImagen.pack()
-            self.botonCargarSegundaImagen.place(x=815, y=570)
+            self.botonCargarSegundaImagen.place(x=790, y=570)
 
             self.variable2 = tk.StringVar()
             self.variable2.set("Seleccionar")
             self.w2 = tk.OptionMenu(self, self.variable2, 'Eje x',
                                 'Eje y', 'Eje z', command=self.ejes2)
             self.w2.place(x=905, y=250)
-            self.escala()
+
             self.btnMatch = tk.Button(self, text="Hacer matched", bg="white",
                                  borderwidth=0, command=lambda: self.confirmacion("1"))
             self.btnMatch.place(x=1010, y=570)
@@ -283,8 +283,6 @@ class histograma(tk.Toplevel):
     def confirmacion(self, metodo):
 
         if metodo == "1":
-
-            self.imagen = self.img.get_fdata()
-            self.imagen2 = self.img2.get_fdata()
             self.imagen1_2 = intensidad.histograma(self.imagen, self.imagen2)
-            self.escala()
+            self.escala2()
+            self.mostrar_histograma()

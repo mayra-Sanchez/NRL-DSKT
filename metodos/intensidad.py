@@ -31,13 +31,9 @@ class intensidad():
         return imagen_zscore
 
     def histograma(imgOrigen, imgObjetivo):
-        # Obtener los datos de las imágenes
-        datos_origen = imgOrigen.get_fdata()
-        datos_objetivo = imgObjetivo.get_fdata()
-
         # Redimensionar los datos en un solo arreglo 1D
-        plano_origen = datos_origen.flatten()
-        plano_objetivo = datos_objetivo.flatten()
+        plano_origen = imgOrigen.flatten()
+        plano_objetivo = imgObjetivo.flatten()
 
         # Calcular los histogramas acumulativos
         hist_origen, bins = np.histogram(plano_origen, bins=256, range=(0, 255), density=True)
@@ -53,7 +49,7 @@ class intensidad():
         lut = np.interp(hist_origen_acumulativo, hist_objetivo_acumulativo, bins[:-1])
 
         # Aplicar el mapeo a los datos de la imagen de origen
-        datos_emparejados = np.interp(datos_origen, bins[:-1], lut)
+        datos_emparejados = np.interp(imgOrigen, bins[:-1], lut)
 
         # Ajustar los valores extremos nuevamente
         datos_emparejados = np.clip(datos_emparejados, valor_minimo, valor_maximo)
