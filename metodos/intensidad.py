@@ -30,31 +30,22 @@ class intensidad():
         imagen_zscore = (imagen - media) / desviacion_estandar 
         return imagen_zscore
 
-    def histograma(imgOrigen, imgObjetivo):
-        # Redimensionar los datos en un solo arreglo 1D
-        plano_origen = imgOrigen.flatten()
-        plano_objetivo = imgObjetivo.flatten()
+    def histograma(flair_image,imagen):
+        k=3
+        # Reshape the data arrays to 1D arrays
+        referencia = flair_image.flatten()
+        entrada = imagen.flatten()
 
-        # Calcular los histogramas acumulativos
-        hist_origen, bins = np.histogram(plano_origen, bins=256, range=(0, 255), density=True)
-        hist_origen_acumulativo = hist_origen.cumsum()
-        hist_objetivo, _ = np.histogram(plano_objetivo, bins=256, range=(0, 255), density=True)
-        hist_objetivo_acumulativo = hist_objetivo.cumsum()
 
-        # Ajustar los valores extremos
-        valor_minimo = min(plano_origen.min(), plano_objetivo.min())
-        valor_maximo = max(plano_origen.max(), plano_objetivo.max())
+        imagen_referencia = np.percentile(referencia, np.linspace(0, 100, k))
+        tranformar_imagen = np.percentile(entrada, np.linspace(0, 100, k))
 
-        # Mapear los valores de la imagen de origen a los valores de la imagen objetivo
-        lut = np.interp(hist_origen_acumulativo, hist_objetivo_acumulativo, bins[:-1])
+        combinacion = np.interp(entrada, tranformar_imagen, imagen_referencia)
 
-        # Aplicar el mapeo a los datos de la imagen de origen
-        datos_emparejados = np.interp(imgOrigen, bins[:-1], lut)
 
-        # Ajustar los valores extremos nuevamente
-        datos_emparejados = np.clip(datos_emparejados, valor_minimo, valor_maximo)
+        resultado = combinacion.reshape(imagen.shape)
 
-        return datos_emparejados
+        return resultado
     
     def white_stripe(imagen):
         # Calcula el histograma

@@ -283,6 +283,8 @@ class histograma(tk.Toplevel):
     def confirmacion(self, metodo):
 
         if metodo == "1":
-            self.imagen1_2 = intensidad.histograma(self.imagen, self.imagen2)
+            self.imagen = self.img.get_fdata()
+            self.imagen2 = self.img2.get_fdata()
+            self.imagen = intensidad.histograma(self.imagen, self.imagen2)
             self.escala2()
             self.mostrar_histograma()
