@@ -134,7 +134,7 @@ class imagenes(tk.Toplevel):
         self.canvas.place(x=100, y=100, width=450, height=450)
 
         # Pacientes
-        self.labelCarpeta = tk.Label(self, text="Selecciona el paciente")
+        self.labelCarpeta = tk.Label(self, text="Selecciona el registro")
         self.labelCarpeta.pack()
         self.labelCarpeta.config(font=('Times new roman', 15))
         self.labelCarpeta.place(x=600, y=200)
@@ -186,12 +186,3 @@ class imagenes(tk.Toplevel):
         self.btnReset = tk.Button(self, text="Reiniciar selección", command=reset_components)
         self.btnReset.pack()
         self.btnReset.place(x=780, y=520)
-
-        # Seleccionar Ejes
-        # self.variable =  tk.StringVar()
-        # self.variable.set("Seleccionar")
-        # self.labelAxis =  tk.Label(self, text ="Movimientos de ejes: ", bg="grey", fg="black" )
-        # self.labelAxis.config(font=('Times new roman', 15))
-        # self.labelAxis.place(x=600, y=300)
-        # self.w = tk.OptionMenu(self, self.variable, 'Eje x', 'Eje y', 'Eje z')
-        # self.w.place(x=800, y=300)

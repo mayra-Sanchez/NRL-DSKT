@@ -4,8 +4,11 @@ import nibabel as nib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from metodos.registro import Registro
+from tkinter import ttk, messagebox
 import os
 import numpy as np
+from PIL import Image, ImageTk
+
 
 class registro(tk.Toplevel):
     def __init__(self, parent):
@@ -56,21 +59,7 @@ class registro(tk.Toplevel):
         self.w = tk.OptionMenu(self, self.variable, 'Eje x',
                                'Eje y', 'Eje z', command=self.ejes)
         self.w.place(x=740, y=100)
-
-        # Almacenar imagen generada
-        # self.labelNombre = Label(self, text="Nombre de la imagen:" , bg="grey", fg="black")
-        # self.labelNombre.pack()
-        # self.labelNombre.config(font=('Times new roman', 12))
-        # self.labelNombre.place(x=100, y=570)
-
-        # self.entryNombre = Entry(self)
-        # self.entryNombre.pack()
-        # self.entryNombre.place(x=250, y=570)
-
-        # self.botonGuardar = Button(self, text="Guardar imagen", command=self.guardar_imagen)
-        # self.botonGuardar.pack()
-        # self.botonGuardar.place(x=420, y=570)
-
+        
         # Seleccionar ruido
         self.registro_m = tk.StringVar()
         self.registro_m.set("Seleccionar")
@@ -138,33 +127,6 @@ class registro(tk.Toplevel):
         ), from_=0, to=self.size, orient='vertical', bg="grey", fg="black", command=self.escala)
         self.escalaEjes.place(x=20, y=100)    
 
-    # Guardar imagen generada en una carpeta
-    def guardar_imagen(self):
-        # Abre el cuadro de diálogo para seleccionar la carpeta de destino
-        directorio_destino = filedialog.askdirectory()
-
-        # Verifica si se seleccionó una carpeta
-        if directorio_destino:
-            # Obtiene el nombre ingresado por el usuario en la caja de entrada de texto
-            nombre_archivo = self.entryNombre.get()
-
-            # Verifica si se ingresó un nombre de archivo
-            if nombre_archivo:
-                # Convertir la imagen a un tipo de dato compatible
-                imagen_nifti = np.uint8(self.imagen)
-
-                # Construir la imagen NIfTI
-                nifti_image = nib.Nifti1Image(imagen_nifti, self.img.affine)
-
-                # Construir la ruta de guardado utilizando la carpeta de destino y el nombre del archivo
-                ruta_guardado = os.path.join(directorio_destino, nombre_archivo + ".nii.gz")
-
-                # Guardar la imagen NIfTI
-                nib.save(nifti_image, ruta_guardado)
-                print("Imagen guardada en:", ruta_guardado)
-            else:
-                print("Por favor, ingrese un nombre de archivo.")
-
     def seleccionar_registro(self, *args):
 
         if self.registro_m.get() == 'Registro' and self.rutaImage != "":
@@ -213,6 +175,40 @@ class registro(tk.Toplevel):
         self.canvas_widget2.get_tk_widget().place(x=0, y=0, width=300, height=300)
         cid = self.fig2.canvas.mpl_connect('button_press_event', self.click2)  # Use self.fig2.canvas instead of self.fig2.canvasSegmentacion
 
+    # Guardar imagen generada en una carpeta
+    def guardar_imagen(self):
+        if self.canvas_fig_agg:
+            # Abre el cuadro de diálogo para seleccionar la carpeta de destino
+            directorio_destino = filedialog.askdirectory()
+
+            # Verifica si se seleccionó una carpeta
+            if directorio_destino:
+                # Obtiene el nombre ingresado por el usuario en la caja de entrada de texto
+                nombre_archivo = self.entryNombre.get()
+
+                # Verifica si se ingresó un nombre de archivo
+                if nombre_archivo:
+                    # Obtiene la imagen del canvasResultado como una matriz NumPy
+                    imagen_numpy = self.canvasResultado.get_image().astype(np.uint8)
+
+                    # Verifica si la imagen tiene una dimensión 3D
+                    if imagen_numpy.ndim == 3:
+                        # Construye la imagen NIfTI
+                        nifti_image = nib.Nifti1Image(imagen_numpy, affine=np.eye(4))
+
+                        # Construye la ruta de guardado utilizando la carpeta de destino y el nombre del archivo
+                        ruta_guardado = os.path.join(directorio_destino, nombre_archivo + ".nii")
+
+                        # Guarda la imagen NIfTI
+                        nib.save(nifti_image, ruta_guardado)
+                        print("Imagen guardada en:", ruta_guardado)
+                    else:
+                        print("La imagen debe tener una dimensión 3D para guardarla como NIfTI.")
+                else:
+                    print("Por favor, ingrese un nombre de archivo.")
+        else:
+            print("No hay imagen para guardar.")
+                
     def cargar_imagenSecundaria(self):
 
         initial_dir = "Resources/images"
@@ -254,10 +250,63 @@ class registro(tk.Toplevel):
     def confirmacion(self, metodo):
 
         if metodo == "1":
-            self.imagen = self.img.get_fdata()
-            self.imagen2 = self.img2.get_fdata()
-            self.imagen= Registro.registro(self.imagen, self.imagen2)
+            self.imagen = Registro.registro(self.rutaImage, self.rutaImage2)
             self.escala2()
+            
+            self.current_image = None  # Track the currently displayed image
+
+            def seleccionar_imagen(event):
+                global data, ruta_imagen
+                imagen_seleccionada = dropdown_contenido.get()
+                print("imagen seleccionada: ", imagen_seleccionada)
+                if imagen_seleccionada:
+                    ruta_imagen = os.path.join(
+                        "./resources/resultadosRegistros", imagen_seleccionada)
+
+                    # Load the NIfTI image using nibabel
+                    img = nib.load(ruta_imagen)
+                    data = img.get_fdata()
+
+                    # Display the image on the canvas
+                    plt.figure(figsize=(4.5, 4.5))
+                    plt.imshow(data[:,:,0])
+                    plt.axis('on')
+
+                    if hasattr(self, "canvas_fig_agg"):
+                        self.canvas_fig_agg.get_tk_widget().destroy()
+                        del self.canvas_fig_agg
+
+                    self.canvas_fig_agg = FigureCanvasTkAgg(plt.gcf(), master=self.canvasResultado)
+                    self.canvas_fig_agg.draw()
+                    self.canvas_fig_agg.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
+
+            ruta_carpeta = "./resources/resultadosRegistros"
+            contenido_carpeta = os.listdir(ruta_carpeta)
+
+            self.labelImagenes = tk.Label(self, text="Selecciona el registro")
+            self.labelImagenes.pack()
+            self.labelImagenes.config(font=('Times new roman', 10))
+            self.labelImagenes.place(x=1100, y=70)
+            self.labelImagenes.config(bg="grey")
+
+            dropdown_contenido = ttk.Combobox(self, values=contenido_carpeta)
+            dropdown_contenido.bind("<<ComboboxSelected>>", seleccionar_imagen)
+            dropdown_contenido.pack()
+            dropdown_contenido.place(x=1250, y=70)
+
+            # Almacenar imagen generada
+            self.labelNombre = Label(self, text="Nombre de la imagen:" , bg="grey", fg="black")
+            self.labelNombre.pack()
+            self.labelNombre.config(font=('Times new roman', 10))
+            self.labelNombre.place(x=1100, y=570)
+
+            self.entryNombre = Entry(self)
+            self.entryNombre.pack()
+            self.entryNombre.place(x=1250, y=570)
+
+            self.botonGuardar = Button(self, text="Guardar imagen", command=self.guardar_imagen)
+            self.botonGuardar.pack()
+            self.botonGuardar.place(x=1380, y=570)
 
         elif metodo == "2":
             self.imagen = self.img.get_fdata()
