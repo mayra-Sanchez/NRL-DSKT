@@ -1,4 +1,4 @@
-import ants 
+import ants
 import nibabel as nib
 import numpy as np
 
@@ -20,7 +20,7 @@ class Registro:
         moving_image = ants.image_read(imagen)
 
         #Realiza el registro
-        registration = ants.registration(fixed=fixed_image, moving=moving_image, type_of_transform='SyN')
+        registration = ants.registration(fixed=fixed_image, moving=moving_image, type_of_transform='Rigid')
 
         #Obtiene la imagen registrada
         registered_image = registration['warpedmovout']
@@ -29,24 +29,14 @@ class Registro:
         salidaImagen = ants.image_write(registered_image, 'ruta_de_la_imagen_registrada.nii.gz')
         return salidaImagen
 
+    def calcular_volumen(datos_imagen):
+        # Cargar los datos en una imagen Nibabel
+        imagen = nib.Nifti1Image(datos_imagen, affine=None)
 
-    def calcular_volumen(imagen):
-        image_header = imagen.header
-        pixdim = image_header['pixdim']
-        pixel_size = np.prod(pixdim[1:4])
+        # Calcular el volumen multiplicando la resolución de los pixeles por el número total de ellos
+        resolucion_voxel = imagen.header['pixdim'][1:4]
+        volumen = resolucion_voxel[0] * resolucion_voxel[1] * resolucion_voxel[2] * datos_imagen.size
 
-        image_data = imagen.get_fdata()
-        unique_labels = np.unique(image_data.astype(int))
+        print("El volumen del cerebro es:", volumen)
 
-        cluster_volumens = {}
-        for label in unique_labels:
-            if label == 0:
-                continue
-        
-            cluster_mask = (image_data == label)
-            cluster_pixels = np.sum(cluster_mask)
-            cluster_volumen = cluster_pixels * pixel_size
-
-            cluster_volumens[label] = cluster_volumen
-        print(cluster_volumens)
-        return cluster_volumens
+        return volumen

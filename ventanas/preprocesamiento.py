@@ -39,8 +39,8 @@ class preprocesamiento(tk.Toplevel):
         self.botonCargar.place(x=420, y=70)
 
         # Crear un lienzo para mostrar la imagen
-        self.canvas = tk.Canvas(self, bg='white')
-        self.canvas.place(x=100, y=100, width=450, height=450)
+        self.canvasImagen = tk.Canvas(self, bg='white')
+        self.canvasImagen.place(x=100, y=100, width=450, height=450)
 
         # Crear un lienzo para mostrar el histograma
         self.canvasHistograma = tk.Canvas(self, bg='white')
@@ -100,45 +100,27 @@ class preprocesamiento(tk.Toplevel):
     
     def cargar_imagen(self):
 
-            initial_dir = "Resources/images"
-            self.file_path = filedialog.askopenfilename(initialdir=initial_dir)
-            self.rutaImage = self.file_path
-            self.img = nib.load(self.rutaImage)
-            self.imagen = self.img.get_fdata()
-            self.iniciar()
-
+        initial_dir = "Resources/images"
+        self.file_path = filedialog.askopenfilename(initialdir=initial_dir)
+        self.rutaImage = self.file_path
+        self.img = nib.load(self.rutaImage)
+        self.imagen = self.img.get_fdata()
+        self.iniciar()
+    
     def click(self, event):
-
         if self.ax.contains(event)[0]:
             x = int(event.xdata)
             y = int(event.ydata)
 
     def iniciar(self):
-
-        self.canvas.delete("all")
+        self.canvasImagen.delete("all")
         self.fig, self.ax = plt.subplots()
         self.ax.imshow(self.imagen[:, :, 0])
-        self.canvas_widget = FigureCanvasTkAgg(self.fig, self.canvas)
+        self.canvas_widget = FigureCanvasTkAgg(self.fig, self.canvasImagen)
         self.canvas_widget.draw()
         self.canvas_widget.get_tk_widget().place(x=0, y=0, width=450, height=450)
         cid = self.fig.canvas.mpl_connect('button_press_event', self.click)
-
-    def escala(self, *args):
-
-        if self.rutaImage != "":
-            self.canvas.delete("all")
-            if self.variable.get() == 'Eje x':
-                self.ax.imshow(self.imagen[self.escalaEjes.get(), :, :])
-            elif self.variable.get() == 'Eje y':
-                self.ax.imshow(self.imagen[:, self.escalaEjes.get(), :])
-            elif self.variable.get() == 'Eje z':
-                self.ax.imshow(self.imagen[:, :, self.escalaEjes.get()])
-            else:
-                self.ax.imshow(self.imagen[:, :, 0])
-            self.canvas_widget.draw()
-        else:
-            pass
-
+    
     def mostrar_histograma(self):
         self.canvasHistograma.delete("all")
 
@@ -151,6 +133,20 @@ class preprocesamiento(tk.Toplevel):
         self.fig_histograma_canvas.draw()
         self.fig_histograma_canvas.get_tk_widget().place(x=50, y=60, height=int(self.canvasHistograma.winfo_reqheight()), width=int(self.canvasHistograma.winfo_reqwidth()))
 
+    def escala(self, *args):
+        if self.rutaImage != "":
+            self.canvasImagen.delete("all")
+            if self.variable.get() == 'Eje x':
+                self.ax.imshow(self.imagen[self.escalaEjes.get(), :, :])
+            elif self.variable.get() == 'Eje y':
+                self.ax.imshow(self.imagen[:, self.escalaEjes.get(), :])
+            elif self.variable.get() == 'Eje z':
+                self.ax.imshow(self.imagen[:, :, self.escalaEjes.get()])
+            else:
+                self.ax.imshow(self.imagen[:, :, 0])
+            self.canvas_widget.draw()
+        else:
+            pass
 
     def ejes(self, *args):
 
@@ -165,18 +161,7 @@ class preprocesamiento(tk.Toplevel):
         self.escalaEjes = tk.Scale(self, label=self.variable.get(
         ), from_=0, to=self.size, orient='vertical', bg="grey", fg="black", command=self.escala)
         self.escalaEjes.place(x=20, y=100)
-    
-    def seleccion_ruido(self, *args):
-        if self.ruido_m.get() == 'Filtro medio' and self.rutaImage != "":
-            self.imagen = self.img.get_fdata()
-            self.imagen = ruido.filtro_promedio(self.imagen)
-            self.escala()
 
-        if self.ruido_m.get() == 'Filtro mediano' and self.rutaImage != "":
-            self.imagen = self.img.get_fdata()
-            self.imagen = ruido.filtro_mediana(self.imagen)
-            self.escala()
-    
     # Guardar imagen generada en una carpeta
     def guardar_imagen(self):
         # Abre el cuadro de diálogo para seleccionar la carpeta de destino
@@ -203,3 +188,125 @@ class preprocesamiento(tk.Toplevel):
                 print("Imagen guardada en:", ruta_guardado)
             else:
                 print("Por favor, ingrese un nombre de archivo.")
+
+    def click2(self, event):
+        if self.ax2.contains(event)[0]:
+            x = int(event.xdata)
+            y = int(event.ydata)
+
+    def iniciar2(self):
+        self.canvasSegmentacion.delete("all")  # Use self.canvasSegmentacion instead of self.canvasSegmentacion
+        self.fig2, self.ax2 = plt.subplots()
+        self.ax2.imshow(self.imagen2[:, :, 0])
+        self.canvas_widget2 = FigureCanvasTkAgg(self.fig2, self.canvasSegmentacion)  # Use self.canvasImagen
+        self.canvas_widget2.draw()
+        self.canvas_widget2.get_tk_widget().place(x=0, y=0, width=300, height=300)
+        cid = self.fig2.canvas.mpl_connect('button_press_event', self.click2)  # Use self.fig2.canvas instead of self.fig2.canvasSegmentacion
+
+    def cargar_imagenSecundaria(self):
+
+        initial_dir = "Resources/images"
+        self.file_path2 = filedialog.askopenfilename(initialdir=initial_dir)
+        self.rutaImage2 = self.file_path2
+        self.img2 = nib.load(self.rutaImage2)
+        self.imagen2 = self.img2.get_fdata()
+        self.iniciar2()
+
+    def seleccion_intensidad(self, *args):
+
+        if self.intensidad_m.get()=='Reescala' and self.rutaImage!="" :
+            self.imagen = self.img.get_fdata()
+            self.imagen = intensidad.reescala(self.imagen)
+            self.escala()
+            self.canvasSegmentacion.destroy()
+            self.w2.destroy()
+            self.escalaEjes2.destroy()
+            self.botonCargarSegundaImagen.destroy()
+
+        if self.intensidad_m.get()=='z-score' and self.rutaImage!="" :
+            self.imagen = self.img.get_fdata()
+            self.imagen = intensidad.z_score(self.imagen)
+            self.escala()
+            self.canvasSegmentacion.destroy()
+            self.w2.destroy()
+            self.escalaEjes2.destroy()
+            self.botonCargarSegundaImagen.destroy()
+
+        if self.intensidad_m.get()=='Coincidencia de histograma' and self.rutaImage!="" :
+            self.canvasSegmentacion = tk.Canvas(
+            self, width=300, height=300, bg="grey", highlightbackground="black", highlightthickness=2)
+            self.canvasSegmentacion.pack()
+            self.canvasSegmentacion.place(x=600, y=250)
+
+            self.botonCargarSegundaImagen = Button(
+            self, text="Cargar imagen", command=self.cargar_imagenSecundaria)
+            self.botonCargarSegundaImagen.pack()
+            self.botonCargarSegundaImagen.place(x=790, y=570)
+
+            self.variable2 = tk.StringVar()
+            self.variable2.set("Seleccionar")
+            self.w2 = tk.OptionMenu(self, self.variable2, 'Eje x',
+                                'Eje y', 'Eje z', command=self.ejes2)
+            self.w2.place(x=905, y=250)
+
+            self.btnMatch = tk.Button(self, text="Hacer matched", bg="white",
+                                 borderwidth=0, command=lambda: self.confirmacion("1"))
+            self.btnMatch.place(x=1010, y=570)
+
+        if self.intensidad_m.get()=='Raya blanca' and self.rutaImage!="" :
+            self.imagen = self.img.get_fdata()
+            self.imagen = intensidad.white_stripe(self.imagen)
+            self.escala()
+            self.canvasSegmentacion.destroy()
+            self.w2.destroy()
+            self.escalaEjes2.destroy()
+            self.botonCargarSegundaImagen.destroy()
+
+    def escala2(self, *args):
+        if self.rutaImage2 != "":
+            self.canvasSegmentacion.delete("all")
+            if self.variable2.get() == 'Eje x':
+                self.ax2.imshow(self.imagen2[self.escalaEjes2.get(), :, :])
+            elif self.variable2.get() == 'Eje y':
+                self.ax2.imshow(self.imagen2[:, self.escalaEjes2.get(), :])
+            elif self.variable2.get() == 'Eje z':
+                self.ax2.imshow(self.imagen2[:, :, self.escalaEjes2.get()])
+            else:
+                self.ax2.imshow(self.imagen2[:, :, 0])
+            self.canvas_widget2.draw()
+        else:
+            pass
+
+    def ejes2(self, *args):
+
+        if self.variable2.get() == 'X' and self.rutaImage2 != "":
+            self.size2 = (self.imagen2.shape[0])-1
+        elif self.variable2.get() == 'Y' and self.rutaImage2 != "":
+            self.size2 = (self.imagen2.shape[1])-1
+        elif self.variable2.get() == 'Z' and self.rutaImage2 != "":
+            self.size2 = (self.imagen2.shape[2])-1
+        else:
+            self.size2 = 10
+        self.escalaEjes2 = tk.Scale(self, label=self.variable2.get(
+        ), from_=0, to=self.size2, orient='vertical', bg="grey", fg="black", command=self.escala2)
+        self.escalaEjes2.place(x=910, y=350)
+
+    def confirmacion(self, metodo):
+
+        if metodo == "1":
+            self.imagen = self.img.get_fdata()
+            self.imagen2 = self.img2.get_fdata()
+            self.imagen = intensidad.histograma(self.imagen, self.imagen2)
+            self.escala2()
+            self.mostrar_histograma()
+
+    def seleccion_ruido(self, *args):
+        if self.ruido_m.get() == 'Filtro medio' and self.rutaImage != "":
+            self.imagen = self.img.get_fdata()
+            self.imagen = ruido.filtro_promedio(self.imagen)
+            self.escala()
+
+        if self.ruido_m.get() == 'Filtro mediano' and self.rutaImage != "":
+            self.imagen = self.img.get_fdata()
+            self.imagen = ruido.filtro_mediana(self.imagen)
+            self.escala()

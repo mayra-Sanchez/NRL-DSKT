@@ -167,34 +167,37 @@ class registro(tk.Toplevel):
 
     def seleccionar_registro(self, *args):
 
-        self.canvasSegmentacion = tk.Canvas(
-        self, width=300, height=300, bg="grey", highlightbackground="black", highlightthickness=2)
-        self.canvasSegmentacion.pack()
-        self.canvasSegmentacion.place(x=600, y=250)
-
-        self.botonCargarSegundaImagen = Button(
-        self, text="Cargar imagen", command=self.cargar_imagenSecundaria)
-        self.botonCargarSegundaImagen.pack()
-        self.botonCargarSegundaImagen.place(x=790, y=570)
-
-        self.variable2 = tk.StringVar()
-        self.variable2.set("Seleccionar")
-        self.w2 = tk.OptionMenu(self, self.variable2, 'Eje x',
-                                'Eje y', 'Eje z', command=self.ejes2)
-        self.w2.place(x=905, y=250)
-
         if self.registro_m.get() == 'Registro' and self.rutaImage != "":
 
             self.btnRegistro = tk.Button(self, text="Hacer registro", bg="white",
                                  borderwidth=0, command=lambda: self.confirmacion("1"))
             self.btnRegistro.place(x=1010, y=570)
+            self.canvasSegmentacion = tk.Canvas(
+            self, width=300, height=300, bg="grey", highlightbackground="black", highlightthickness=2)
+            self.canvasSegmentacion.pack()
+            self.canvasSegmentacion.place(x=600, y=250)
+
+            self.botonCargarSegundaImagen = Button(
+            self, text="Cargar imagen", command=self.cargar_imagenSecundaria)
+            self.botonCargarSegundaImagen.pack()
+            self.botonCargarSegundaImagen.place(x=790, y=570)
+
+            self.variable2 = tk.StringVar()
+            self.variable2.set("Seleccionar")
+            self.w2 = tk.OptionMenu(self, self.variable2, 'Eje x',
+                                    'Eje y', 'Eje z', command=self.ejes2)
+            self.w2.place(x=905, y=250)
             self.btnVolumen.destroy()
+            self.vol.destroy()
+            self.EntryVolumen.destroy()
 
         if self.registro_m.get() == 'Calcular volumen' and self.rutaImage != "":
 
-            self.btnVolumen = tk.Button(self, text="Calcular volumen", bg="white", borderwidth=0, command=lambda: self.confirmacion("1"))
+            self.btnVolumen = tk.Button(self, text="Calcular volumen", bg="white", borderwidth=0, command=lambda: self.confirmacion("2"))
             self.btnVolumen.place(x=1010, y=570)
-            self.btnRegistro.destroy()
+            self.w2.destroy()
+            self.botonCargarSegundaImagen.destroy()
+            self.canvasSegmentacion.destroy()
 
     def click2(self, event):
         if self.ax2.contains(event)[0]:
@@ -258,5 +261,26 @@ class registro(tk.Toplevel):
             self.escala()
 
         elif metodo == "2":
+            self.imagen = self.img.get_fdata()
+            self.resultado_volumen = Registro.calcular_volumen(self.imagen)
+            self.escala()
 
-            pass
+            # label
+            self.vol = tk.Label(self, text="El volumen es: ")
+            self.vol.pack()
+            self.vol.config(font=('Times new roman', 15))
+            self.vol.place(x=100, y=570)
+            self.vol.config(bg="grey")
+
+            # Crear y ubicar el campo de entrada
+            self.EntryVolumen = tk.Entry(self, state="disabled")
+            self.EntryVolumen.pack()
+            self.EntryVolumen.place(x=250, y=570)
+
+            # Mostrar el valor del volumen en un campo de entrada
+            self.EntryVolumen.delete(0, tk.END)  # Borrar el contenido actual del Entry
+            self.EntryVolumen.insert(0, str(self.resultado_volumen))  # Insertar el valor del volumen en el Entry
+
+            # Mostrar el valor del volumen en una etiqueta
+            self.labelVolumen= tk.Label(self)
+            self.labelVolumen.config(text="Volumen: {}".format(self.resultado_volumen))
