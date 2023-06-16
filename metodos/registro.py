@@ -15,19 +15,21 @@ class Registro:
             self.calcular_volumen()
 
     def registro(imagen_flair, imagen):
-        #Carga las imágenes de entrada
+        # Carga las imágenes de entrada
         fixed_image = ants.image_read(imagen_flair)
         moving_image = ants.image_read(imagen)
 
-        #Realiza el registro
+        # Realiza el registro
         registration = ants.registration(fixed=fixed_image, moving=moving_image, type_of_transform='Rigid')
 
-        #Obtiene la imagen registrada
+        # Obtiene la imagen registrada
         registered_image = registration['warpedmovout']
 
-        #Guarda la imagen registrada
-        salidaImagen = ants.image_write(registered_image, 'ruta_de_la_imagen_registrada.nii.gz')
-        return salidaImagen
+        # # Guarda la imagen registrada en el disco
+        # ants.image_write(registered_image, 'ruta_de_la_imagen_registrada.nii.gz')
+
+        # Retorna el objeto de imagen registrada
+        return registered_image
 
     def calcular_volumen(datos_imagen):
         # Cargar los datos en una imagen Nibabel

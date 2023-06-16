@@ -256,9 +256,8 @@ class registro(tk.Toplevel):
         if metodo == "1":
             self.imagen = self.img.get_fdata()
             self.imagen2 = self.img2.get_fdata()
-            self.imagen1_2 = Registro.registro(self.imagen, self.imagen2)
+            self.imagen= Registro.registro(self.imagen, self.imagen2)
             self.escala2()
-            self.escala()
 
         elif metodo == "2":
             self.imagen = self.img.get_fdata()
@@ -273,7 +272,7 @@ class registro(tk.Toplevel):
             self.vol.config(bg="grey")
 
             # Crear y ubicar el campo de entrada
-            self.EntryVolumen = tk.Entry(self, state="disabled")
+            self.EntryVolumen = tk.Entry(self)
             self.EntryVolumen.pack()
             self.EntryVolumen.place(x=250, y=570)
 
