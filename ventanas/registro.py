@@ -1,14 +1,13 @@
 import tkinter as tk
-from tkinter import Tk, Label, Button, filedialog, Entry
+from tkinter import Label, Button, filedialog, Entry
 import nibabel as nib
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import matplotlib.pyplot as plt
 from metodos.registro import Registro
-from tkinter import ttk, messagebox
+from tkinter import ttk
 import os
 import numpy as np
 import shutil
-
 
 class registro(tk.Toplevel):
     def __init__(self, parent):
@@ -174,7 +173,6 @@ class registro(tk.Toplevel):
         self.canvas_widget2.draw()
         self.canvas_widget2.get_tk_widget().place(x=0, y=0, width=300, height=300)
         cid = self.fig2.canvas.mpl_connect('button_press_event', self.click2)  # Use self.fig2.canvas instead of self.fig2.canvasSegmentacion
-
                 
     def cargar_imagenSecundaria(self):
 
@@ -212,9 +210,7 @@ class registro(tk.Toplevel):
             self.size2 = 10
         self.escalaEjes2 = tk.Scale(self, label=self.variable2.get(
         ), from_=0, to=self.size2, orient='vertical', bg="grey", fg="black", command=self.escala2)
-        self.escalaEjes2.place(x=910, y=350)
-    
-        self.selected_image_path = None  # Store the selected image path in a class variable
+        self.escalaEjes2.place(x=910, y=350)     
 
     def seleccionar_imagen(self, event):
         imagen_seleccionada = self.dropdown_contenido.get()
@@ -240,23 +236,6 @@ class registro(tk.Toplevel):
             self.canvas_fig_agg.draw()
             self.canvas_fig_agg.get_tk_widget().pack(side=tk.TOP, fill=tk.BOTH, expand=1)
 
-    # def guardar_imagen(self):
-    #     if self.selected_image_path:
-    #         # Get the name entered by the user in the text entry box
-    #         nombre_archivo = self.entryNombre.get()
-
-    #         # Check if a file name is entered
-    #         if nombre_archivo:
-    #             # Construct the save path using the destination folder and the file name
-    #             ruta_guardado = os.path.join("./resources/images", nombre_archivo + ".nii.gz")
-
-    #             # Copy the selected image to the destination folder
-    #             shutil.copyfile(self.selected_image_path, ruta_guardado)
-    #             print("Imagen guardada en:", ruta_guardado)
-    #         else:
-    #             print("Por favor, ingrese un nombre de archivo.")
-    #     else:
-    #         print("Por favor, seleccione una imagen del dropdown.")
     def guardar_imagen(self):
         if self.selected_image_path:
             # Get the name entered by the user in the text entry box

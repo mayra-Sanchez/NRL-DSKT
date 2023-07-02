@@ -55,3 +55,24 @@ class Registro:
         print("El volumen del cerebro es:", volumen)
 
         return volumen
+
+    def calculate_volumes(image):
+        image_header = image.header
+        pixdim = image_header['pixdim']
+        pixel_size = np.prod(pixdim[1:4])
+
+        image_data = image.get_fdata()
+        unique_labels = np.unique(image_data.astype(int))
+
+        cluster_volumens = {}
+        for label in unique_labels:
+            if label == 0:
+                continue
+        
+            cluster_mask = (image_data == label)
+            cluster_pixels = np.sum(cluster_mask)
+            cluster_volumen = cluster_pixels * pixel_size
+
+            cluster_volumens[label] = cluster_volumen
+        print(cluster_volumens)
+        return cluster_volumens
